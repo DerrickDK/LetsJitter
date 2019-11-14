@@ -26,7 +26,6 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHold
         this.myUser = myUser;
     }
 
-    @NonNull
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(myContext).inflate(R.layout.contact_item, parent, false);
@@ -34,21 +33,26 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHold
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(final ViewHolder holder, int position) {
         user = new ContactUser();
         user = myUser.get(position); //get a spacific index
-        System.out.println("Full: "+user.toString());
+        System.out.println("Full: "+user.toString() + " "+position);
         holder.username.setText(user.getUsername());
         if(user.getImageURL().equals("default")){
             holder.profile_image.setImageResource(R.drawable.profileicon);
         }else{
             Glide.with(myContext).load(user.getImageURL()).into(holder.profile_image);
         }
+
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+               // System.out.println("Position clicked: "+holder.getLayoutPosition());
+               // System.out.println("User clicked: "+myUser.get(holder.getAdapterPosition()));
+               // System.out.println("User clicked: "+user.toString());
+               // System.out.println("Item :"+ holder.getAdapterPosition());
                 Intent intent = new Intent(myContext, MessagingActivity.class);
-                intent.putExtra("userID", user.getUsername());
+                intent.putExtra("userID", myUser.get(holder.getAdapterPosition()).getUserID());
                 myContext.startActivity(intent);
             }
         });

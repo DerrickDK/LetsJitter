@@ -67,7 +67,6 @@ public class ContactsFragment extends Fragment {
                     ContactUser user = new ContactUser();
                     user = snapshot.getValue(ContactUser.class);
                     user.setUserID(snapshot.child("id").getValue().toString());
-                    System.out.println("This is my ID: "+user.toString());
                     myUser.add(user);
                 }
                 contactAdapter = new ContactAdapter(getContext(), myUser);
