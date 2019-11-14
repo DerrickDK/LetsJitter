@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "191560304016",
+    "firebase_url": "https://letsjitter.firebaseio.com",
+    "project_id": "letsjitter",
+    "storage_bucket": "letsjitter.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:191560304016:android:d7294b41af5b07c0219f15",
+        "android_client_info": {
+          "package_name": "edu.uga.cs.letsjitter"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "191560304016-3evnjshcs6ta52b4ufslepi728ehml03.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "edu.uga.cs.letsjitter",
+            "certificate_hash": "d5d03db09c09e8361d4fec542c041e54c250de00"
+          }
+        },
+        {
+          "client_id": "191560304016-o9j8m8t5vnc89lp0gfk1laler8rsvc7v.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCpVaAmXQefrMQ6gLAns_ZwjN984Wz3CTE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "191560304016-o9j8m8t5vnc89lp0gfk1laler8rsvc7v.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
