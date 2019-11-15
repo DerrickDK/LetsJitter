@@ -36,18 +36,18 @@ public class MessagingActivity extends AppCompatActivity {
     private DatabaseReference myDatabase;
     private Intent intent;
     private String userId;
-   // private ChatAdapter chatAdapter;
-   // private List<Chat> myChat;
+    private ChatAdapter chatAdapter;
+    private List<Chat> myChat;
     private RecyclerView recyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_messaging);
-        recyclerView = findViewById(R.id.recycler_view);
+        recyclerView = findViewById(R.id.messageRecycle);
         recyclerView.setHasFixedSize(true);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getApplicationContext());
-        linearLayoutManager.setStackFromEnd(true);
+        linearLayoutManager.setStackFromEnd(true); //helps with scrolling when you enter a text
         recyclerView.setLayoutManager(linearLayoutManager);
 
         profileImage = (CircleImageView) findViewById(R.id.profileimage);
@@ -84,7 +84,7 @@ public class MessagingActivity extends AppCompatActivity {
                 }else {
                     Glide.with(MessagingActivity.this).load(user.getImageURL()).into(profileImage);
                 }
-                //readMessages(currentUser.getUid(), userId, user.getImageURL());
+                readMessages(currentUser.getUid(), userId, user.getImageURL());
             }
 
             @Override
@@ -102,27 +102,27 @@ public class MessagingActivity extends AppCompatActivity {
         hashMap.put("message", message);
         myDatabase.child("Chats").push().setValue(hashMap); //create a Chat's database instance and then set values appened to chat database
     }
-//    private void readMessages(final String myid, final String userId, final String imageurl){
-//        myChat = new ArrayList<>();
-//        myDatabase = FirebaseDatabase.getInstance().getReference("Chats");
-//        myDatabase.addValueEventListener(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//                myChat.clear();
-//                for(DataSnapshot snapshot: dataSnapshot.getChildren()){
-//                    Chat chat = snapshot.getValue(Chat.class);
-//                    if(chat.getReceiver().equals(myid) && chat.getSender().equals(userId) || chat.getReceiver().equals(userId) && chat.getSender().equals(myid)){
-//                        myChat.add(chat);
-//                    }
-//                    chatAdapter = new ChatAdapter(MessagingActivity.this, myChat, imageurl);
-//                    recyclerView.setAdapter(chatAdapter);
-//                }
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError databaseError) {
-//
-//            }
-//        });
-//    }
+    private void readMessages(final String myid, final String userId, final String imageurl){
+        myChat = new ArrayList<>();
+        myDatabase = FirebaseDatabase.getInstance().getReference("Chats");
+        myDatabase.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                myChat.clear();
+                for(DataSnapshot snapshot: dataSnapshot.getChildren()){
+                    Chat chat = snapshot.getValue(Chat.class);
+                    if(chat.getReceiver().equals(myid) && chat.getSender().equals(userId) || chat.getReceiver().equals(userId) && chat.getSender().equals(myid)){
+                        myChat.add(chat);
+                    }
+                    chatAdapter = new ChatAdapter(MessagingActivity.this, myChat, imageurl);
+                    recyclerView.setAdapter(chatAdapter);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
 }
