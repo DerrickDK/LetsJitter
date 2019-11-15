@@ -52,7 +52,7 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHold
                // System.out.println("User clicked: "+user.toString());
                // System.out.println("Item :"+ holder.getAdapterPosition());
                 Intent intent = new Intent(myContext, MessagingActivity.class);
-                intent.putExtra("userID", myUser.get(holder.getAdapterPosition()).getUserID());
+                intent.putExtra("userID", myUser.get(holder.getAdapterPosition()).getUserID()); //use list value instead
                 myContext.startActivity(intent);
             }
         });

@@ -72,8 +72,7 @@ public class RegisterActivity extends AppCompatActivity {
                                 hashMap.put("id", userID);
                                 hashMap.put("username", userName);
                                 hashMap.put("imageURL", "default");
-
-                                databaseReference.setValue(hashMap).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                databaseReference.setValue(hashMap).addOnCompleteListener(new OnCompleteListener<Void>() { //when values have been added to the database
                                     @Override
                                     public void onComplete(@NonNull Task<Void> task) {
                                         Intent loginScreen = new Intent(RegisterActivity.this, LoginActivity.class);

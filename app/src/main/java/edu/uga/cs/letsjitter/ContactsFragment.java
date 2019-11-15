@@ -32,6 +32,7 @@ public class ContactsFragment extends Fragment {
     private DatabaseReference myDatabase;
     private ContactAdapter contactAdapter;
     private List<ContactUser> myUser;
+    private ContactUser user;
 
     public ContactsFragment() {
         // Required empty public constructor
@@ -41,6 +42,9 @@ public class ContactsFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        authentication = FirebaseAuth.getInstance();
+        firebaseUser = authentication.getCurrentUser();
+        myDatabase = FirebaseDatabase.getInstance().getReference("Users");
     }
 
     @Override
@@ -56,17 +60,15 @@ public class ContactsFragment extends Fragment {
         return view;
     }
     private void readUsers(){
-        final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-        DatabaseReference myDatabase = FirebaseDatabase.getInstance().getReference("Users");
-
         myDatabase.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) { // the problem has to be here. Maybe the logic
                 myUser.clear();
                 for(DataSnapshot snapshot: dataSnapshot.getChildren()){
-                    ContactUser user = new ContactUser();
+                    user = new ContactUser();
                     user = snapshot.getValue(ContactUser.class);
                     user.setUserID(snapshot.child("id").getValue().toString());
+                   // System.out.println("Children: "+user.toString());
                     myUser.add(user);
                 }
                 contactAdapter = new ContactAdapter(getContext(), myUser);
