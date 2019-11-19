@@ -27,6 +27,7 @@
             android:background="@drawable/background_right"
             android:layout_marginLeft="10dp"
             android:padding="10dp"
+            android:textColor="#ffffff"
             android:textSize="18sp"/>
 
     </LinearLayout>
