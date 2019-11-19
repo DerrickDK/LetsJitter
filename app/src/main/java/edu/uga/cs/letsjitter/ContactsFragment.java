@@ -22,6 +22,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class ContactsFragment extends Fragment {
@@ -54,20 +55,25 @@ public class ContactsFragment extends Fragment {
         view = inflater.inflate(R.layout.fragment_contacts, container, false);
         recyclerView = view.findViewById(R.id.recycler_view);
         recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        myUser = new ArrayList<ContactUser>();
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext())); //recyclerView will be wraping view in linear layout style
+        myUser = new ArrayList<ContactUser>(); //store all users in ContactUser array
         readUsers(); //read users from database
         return view;
     }
     private void readUsers(){
         myDatabase.addValueEventListener(new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) { // the problem has to be here. Maybe the logic
+            public void onDataChange(DataSnapshot dataSnapshot) {
                 myUser.clear();
-                for(DataSnapshot snapshot: dataSnapshot.getChildren()){
-                    user = new ContactUser();
-                    user = snapshot.getValue(ContactUser.class);
+                for(DataSnapshot snapshot: dataSnapshot.getChildren()){//root is users so we want to loop through all the users
+                    user = new ContactUser(); //create a new user object everytime we find a new child
+                    //user = snapshot.getValue(ContactUser.class);
                     user.setUserID(snapshot.child("id").getValue().toString());
+                    user.setUsername(snapshot.child("username").getValue().toString());
+                    user.setImageURL(snapshot.child("imageURL").getValue().toString());
+                    if(user.getUserID().equals(firebaseUser.getUid())){ //if child user id equals current user id skip
+                        continue; //skip adding current user to contact's list
+                    }
                    // System.out.println("Children: "+user.toString());
                     myUser.add(user);
                 }

@@ -19,8 +19,8 @@ import com.google.firebase.auth.FirebaseUser;
 import java.util.List;
 
 public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
-    private static final int MSG_LEFT = 0;
     private static final int MSG_RIGHT = 1;
+    private static final int MSG_LEFT = 0;
     private FirebaseUser myUser;
     private Chat chat;
     private Context myContext;
@@ -46,14 +46,13 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        chat = new Chat();
-        chat = myChat.get(position);
-        holder.showMessage.setText(chat.getMessage());
-        if(imageURL.equals("default")){
-            holder.profile_image.setImageResource(R.drawable.profileicon);
-        }else{
-            Glide.with(myContext).load(imageURL).into(holder.profile_image);
-        }
+        myChat.get(position);
+        holder.showMessage.setText(myChat.get(position).getMessage());
+//        if(imageURL.equals("default")){
+//            holder.profile_image.setImageResource(R.drawable.profileicon);
+//        }else{
+//            Glide.with(myContext).load(imageURL).into(holder.profile_image);
+//        }
 
 
     }
@@ -78,9 +77,8 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
 
         public ViewHolder(View itemView) {
             super(itemView);
-            showMessage = itemView.findViewById(R.id.show_message); //username from contactUser_item or other
-            profile_image = itemView.findViewById(R.id.profileImage);
-
+            showMessage = itemView.findViewById(R.id.show_message); //left or right message will be shown depending on user and receiver
+            profile_image = itemView.findViewById(R.id.profileImage); //profile pic of user texting, if needed
         }
     }
 

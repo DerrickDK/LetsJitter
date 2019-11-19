@@ -35,8 +35,9 @@ public class MessagingActivity extends AppCompatActivity {
     private FirebaseAuth authentication;
     private DatabaseReference myDatabase;
     private Intent intent;
-    private String userId;
+    private String userId; //for intent
     private ChatAdapter chatAdapter;
+    private ContactUser receiver;
     private List<Chat> myChat;
     private RecyclerView recyclerView;
 
@@ -44,7 +45,7 @@ public class MessagingActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_messaging);
-        recyclerView = findViewById(R.id.messageRecycle);
+        recyclerView = findViewById(R.id.messageRecycle); //recycler specifically for messages
         recyclerView.setHasFixedSize(true);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getApplicationContext());
         linearLayoutManager.setStackFromEnd(true); //helps with scrolling when you enter a text
@@ -58,7 +59,7 @@ public class MessagingActivity extends AppCompatActivity {
         currentUser = authentication.getCurrentUser();
         intent = getIntent();
         userId = intent.getStringExtra("userID"); //get userID from intent in ContactAdapter
-        System.out.println("Intent ID: "+userId);
+//        System.out.println("Intent ID: "+userId);
 
         sendButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -69,7 +70,7 @@ public class MessagingActivity extends AppCompatActivity {
                 }else{
                     Toast.makeText(MessagingActivity.this, "Can't send an empty message", Toast.LENGTH_SHORT).show();
                 }
-                sendMessageText.setText(""); //set back to empty
+                sendMessageText.setText(""); //set textfield back to empty
             }
         });
 
@@ -77,41 +78,43 @@ public class MessagingActivity extends AppCompatActivity {
         myDatabase.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                ContactUser user = dataSnapshot.getValue(ContactUser.class);
-                username.setText(user.getUsername());
-                if(user.getImageURL().equals("default")){
+                receiver = dataSnapshot.getValue(ContactUser.class); //user to send message to
+                username.setText(receiver.getUsername()); //
+                if(receiver.getImageURL().equals("default")){ //set receiver chatbox image
                     profileImage.setImageDrawable(getResources().getDrawable(R.drawable.profileicon));
-                }else {
-                    Glide.with(MessagingActivity.this).load(user.getImageURL()).into(profileImage);
+                }else{
+                    Glide.with(MessagingActivity.this).load(receiver.getImageURL()).into(profileImage);
                 }
-                readMessages(currentUser.getUid(), userId, user.getImageURL());
+                displayMessages(currentUser.getUid(), userId, receiver.getImageURL()); //current user sends to receiver
             }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
+            public void onCancelled(DatabaseError databaseError) {
 
             }
         });
 
     }
     private void setSendMessage(String sender, String receiver, String message){
-        myDatabase = FirebaseDatabase.getInstance().getReference();
+        myDatabase = FirebaseDatabase.getInstance().getReference("Chats");
         HashMap<String, Object> hashMap = new HashMap<>();
         hashMap.put("sender", sender);
         hashMap.put("receiver", receiver);
         hashMap.put("message", message);
-        myDatabase.child("Chats").push().setValue(hashMap); //create a Chat's database instance and then set values appened to chat database
+        myDatabase.push().setValue(hashMap); //create a Chat's database instance and then set values appened to chat database
+        //the Chats root database acts like a list, so when I do myDatabase.push(), I'm added new messages to the list
     }
-    private void readMessages(final String myid, final String userId, final String imageurl){
+    private void displayMessages(final String myid, final String userId, final String imageurl){
         myChat = new ArrayList<>();
-        myDatabase = FirebaseDatabase.getInstance().getReference("Chats");
+        myDatabase = FirebaseDatabase.getInstance().getReference("Chats"); //reference Chats database to display all messages
         myDatabase.addValueEventListener(new ValueEventListener() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+            public void onDataChange(DataSnapshot dataSnapshot) {
                 myChat.clear();
                 for(DataSnapshot snapshot: dataSnapshot.getChildren()){
-                    Chat chat = snapshot.getValue(Chat.class);
-                    if(chat.getReceiver().equals(myid) && chat.getSender().equals(userId) || chat.getReceiver().equals(userId) && chat.getSender().equals(myid)){
+                    Chat chat = snapshot.getValue(Chat.class); //chat object to be used for database
+                    //this is for the receiver and sender messages display
+                    if(chat.getSender().equals(userId) && chat.getReceiver().equals(myid) || chat.getSender().equals(myid) && chat.getReceiver().equals(userId)){
                         myChat.add(chat);
                     }
                     chatAdapter = new ChatAdapter(MessagingActivity.this, myChat, imageurl);
@@ -120,7 +123,7 @@ public class MessagingActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
+            public void onCancelled(DatabaseError databaseError) {
 
             }
         });

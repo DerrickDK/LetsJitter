@@ -60,8 +60,8 @@ public class MainActivity extends AppCompatActivity {
             myDatabase.child(user.getUid()).addValueEventListener(new ValueEventListener() { //looking into the database for current user information
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    if((dataSnapshot.hasChild("username"))){ //if the user has a name and the id exist
-                        String userName = dataSnapshot.child("username").getValue().toString();
+                    if((dataSnapshot.hasChild("username") && dataSnapshot.hasChild("id"))){ //if the user has a name and the id exist
+                        String userName = dataSnapshot.child("username").getValue().toString(); //save username
                         Toast.makeText(MainActivity.this, "Welcome "+userName, Toast.LENGTH_SHORT).show();
                     }else{
                         Toast.makeText(MainActivity.this, "Error ", Toast.LENGTH_SHORT).show();
@@ -99,9 +99,10 @@ public class MainActivity extends AppCompatActivity {
                     if(TextUtils.isEmpty(getGroupName)){
                         Toast.makeText(MainActivity.this, "Please enter a group name or cancel", Toast.LENGTH_SHORT).show();
                     }else {
-                        myDatabase.child("Groups").child(getGroupName).setValue("").addOnCompleteListener(new OnCompleteListener<Void>() {
+                        myDatabase = FirebaseDatabase.getInstance().getReference("Groups"); //root
+                        myDatabase.child(getGroupName).setValue("").addOnCompleteListener(new OnCompleteListener<Void>() { //add a child to the root Group reference
                             @Override
-                            public void onComplete(@NonNull Task<Void> task) {
+                            public void onComplete(Task<Void> task) {
                                 if(task.isSuccessful()){
                                     Toast.makeText(MainActivity.this, "Created: "+getGroupName, Toast.LENGTH_SHORT).show();
                                 }

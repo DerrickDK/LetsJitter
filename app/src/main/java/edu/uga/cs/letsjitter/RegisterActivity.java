@@ -44,7 +44,7 @@ public class RegisterActivity extends AppCompatActivity {
         alreadyHaveAnAccount = (TextView) findViewById(R.id.haveAnAccountAlready);
         alreadyHaveAnAccount.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
+            public void onClick(View view) { //already have an account will jump user to login screen
                 Intent loginScreen = new Intent(RegisterActivity.this, LoginActivity.class);
                 startActivity(loginScreen);
             }
@@ -52,8 +52,8 @@ public class RegisterActivity extends AppCompatActivity {
         createAccount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String email = loginEdit.getText().toString();
                 final String userName = firstName.getText().toString() + " "+lastName.getText().toString();
+                String email = loginEdit.getText().toString();
                 String password = passwordEdit.getText().toString();
                 if(TextUtils.isEmpty(email)){ //checks to see if email field is empty
                     Toast.makeText(RegisterActivity.this, "Enter your email", Toast.LENGTH_SHORT).show();
@@ -67,14 +67,14 @@ public class RegisterActivity extends AppCompatActivity {
                             if (task.isSuccessful()) {
                                 user = authentication.getCurrentUser(); //create a new user
                                 String userID = user.getUid(); //gets the new user id
-                                databaseReference = FirebaseDatabase.getInstance().getReference("Users").child(userID); //creates a Id for newly created user. The root of this tree is Users
+                                databaseReference = FirebaseDatabase.getInstance().getReference("Users"); //creates a Id for newly created user. The root of this tree is Users
                                 HashMap<String, String> hashMap = new HashMap<>();
                                 hashMap.put("id", userID);
                                 hashMap.put("username", userName);
                                 hashMap.put("imageURL", "default");
-                                databaseReference.setValue(hashMap).addOnCompleteListener(new OnCompleteListener<Void>() { //when values have been added to the database
+                                databaseReference.child(userID).setValue(hashMap).addOnCompleteListener(new OnCompleteListener<Void>() { //when values have been added to the database
                                     @Override
-                                    public void onComplete(@NonNull Task<Void> task) {
+                                    public void onComplete(@NonNull Task<Void> task) { //for the particular user and its own id, user will have id, username, and imageURL
                                         Intent loginScreen = new Intent(RegisterActivity.this, LoginActivity.class);
                                         loginScreen.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                         startActivity(loginScreen); //send user to login screen to sign in

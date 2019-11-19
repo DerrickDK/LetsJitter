@@ -22,8 +22,8 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHold
     private ContactUser user;
 
     public ContactAdapter(Context myContext, List<ContactUser> myUser) {
-        this.myContext = myContext;
-        this.myUser = myUser;
+        this.myContext = myContext; //this class context
+        this.myUser = myUser; //this class user
     }
 
     @Override
@@ -34,14 +34,14 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHold
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        user = new ContactUser();
-        user = myUser.get(position); //get a spacific index
-        System.out.println("Full: "+user.toString() + " "+position);
-        holder.username.setText(user.getUsername());
-        if(user.getImageURL().equals("default")){
+      //  user = new ContactUser();
+       // user = myUser.get(position); //get a specific index
+        System.out.println("Full: "+myUser.get(position).toString() + " "+position);
+        holder.username.setText(myUser.get(position).getUsername());
+        if(myUser.get(position).getImageURL().equals("default")){
             holder.profile_image.setImageResource(R.drawable.profileicon);
         }else{
-            Glide.with(myContext).load(user.getImageURL()).into(holder.profile_image);
+            Glide.with(myContext).load(myUser.get(position).getImageURL()).into(holder.profile_image);
         }
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -61,7 +61,7 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHold
 
     @Override
     public int getItemCount() {
-        return myUser.size();
+        return myUser.size(); //show all items in myUser ContactUsers array
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
