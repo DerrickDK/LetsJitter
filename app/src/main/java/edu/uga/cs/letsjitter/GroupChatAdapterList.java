@@ -1,8 +1,6 @@
 package edu.uga.cs.letsjitter;
 
 import android.content.Context;
-import android.content.Intent;
-import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,59 +10,72 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.List;
 
-public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
+public class GroupChatAdapterList extends RecyclerView.Adapter<GroupChatAdapterList.ViewHolder> {
     private static final int MSG_RIGHT = 1;
     private static final int MSG_LEFT = 0;
     private FirebaseUser myUser;
-    private Chat chat;
+    private DatabaseReference myUserReference;
+    private String userName;
     private Context myContext;
     private List<Chat> myChat;
-    private String imageURL;
 
-    public ChatAdapter(Context myContext, List<Chat> myChat, String imageURL) {
+    public GroupChatAdapterList(Context myContext, List<Chat> myChat) {
         this.myContext = myContext;
         this.myChat = myChat;
-        this.imageURL = imageURL;
     }
 
+    @NonNull
     @Override
-    public ChatAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public GroupChatAdapterList.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         if(viewType == MSG_RIGHT){
             View view = LayoutInflater.from(myContext).inflate(R.layout.chat_widget_right, parent, false);
-            return new ChatAdapter.ViewHolder(view);
+            return new GroupChatAdapterList.ViewHolder(view);
         }else{
             View view = LayoutInflater.from(myContext).inflate(R.layout.chat_widget_left, parent, false);
-            return new ChatAdapter.ViewHolder(view);
+            return new GroupChatAdapterList.ViewHolder(view);
         }
     }
 
     @Override
-    public void onBindViewHolder(final ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         myChat.get(position);
+//        myUserReference = FirebaseDatabase.getInstance().getReference("Users").child(myUser.getUid());
+//        myUserReference.addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                if(dataSnapshot.hasChild("username")){
+//                    userName = dataSnapshot.child("username").getValue().toString(); //get current username
+//                }
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError databaseError) {
+//
+//            }
+//        });
         holder.showMessage.setText(myChat.get(position).getMessage());
-//        if(imageURL.equals("default")){
-//            holder.profile_image.setImageResource(R.drawable.profileicon);
-//        }else{
-//            Glide.with(myContext).load(imageURL).into(holder.profile_image);
-//        }
-
-
+        holder.profile_image.setImageResource(R.drawable.profileicon);
     }
+
+
     @Override
     public int getItemCount() {
         return myChat.size();
     }
-
     @Override
     public int getItemViewType(int position) {
         myUser = FirebaseAuth.getInstance().getCurrentUser();
-        if(myChat.get(position).getSender().equals(myUser.getUid())){ //if the sender is the current user, then the text will be the right
+        if(myChat.get(position).getSender().equals(myUser.getUid())){
             return MSG_RIGHT;
         }else{
             return MSG_LEFT;
@@ -72,14 +83,14 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        public TextView showMessage;
+        public TextView showMessage, userText;
         public ImageView profile_image;
 
         public ViewHolder(View itemView) {
             super(itemView);
             showMessage = itemView.findViewById(R.id.show_message); //left or right message will be shown depending on user and receiver
+            //userText = itemView.findViewById(R.id.user_Text); //left or right message will be shown depending on user and receiver
             profile_image = itemView.findViewById(R.id.profileImage); //profile pic of user texting, if needed
         }
     }
-
 }

@@ -74,7 +74,7 @@ public class RegisterActivity extends AppCompatActivity {
                                 hashMap.put("imageURL", "default");
                                 databaseReference.child(userID).setValue(hashMap).addOnCompleteListener(new OnCompleteListener<Void>() { //when values have been added to the database
                                     @Override
-                                    public void onComplete(@NonNull Task<Void> task) { //for the particular user and its own id, user will have id, username, and imageURL
+                                    public void onComplete(@NonNull Task<Void> task) { //for the particular user and its own id (child), user will have id, username, and imageURL
                                         Intent loginScreen = new Intent(RegisterActivity.this, LoginActivity.class);
                                         loginScreen.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                         startActivity(loginScreen); //send user to login screen to sign in

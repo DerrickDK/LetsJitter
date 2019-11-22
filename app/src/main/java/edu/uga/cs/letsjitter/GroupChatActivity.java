@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.service.autofill.Dataset;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -27,38 +28,54 @@ import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class MessagingActivity extends AppCompatActivity {
+public class GroupChatActivity extends AppCompatActivity {
     private CircleImageView profileImage;
-    private TextView username, sendMessageText;
+    private TextView groupname, sendMessageText;
     private Button sendButton;
     private FirebaseUser currentUser;
-    private FirebaseAuth authentication;
-    private DatabaseReference myDatabase;
+    private DatabaseReference myDatabase, userReference;
     private Intent intent;
-    private String userId; //for intent
-    private ChatAdapter chatAdapter;
-    private ContactUser receiver;
+    private String groupName, userName; //for intent
+    private GroupChatAdapterList groupChatAdapter;
+    private Group group;
     private List<Chat> myChat;
     private RecyclerView recyclerView;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_messaging);
-        recyclerView = findViewById(R.id.messageRecycle); //recycler specifically for messages
+        setContentView(R.layout.activity_group_chat);
+
+        recyclerView = findViewById(R.id.groupRecycle); //recycler specifically for messages
         recyclerView.setHasFixedSize(true);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getApplicationContext());
         linearLayoutManager.setStackFromEnd(true); //helps with scrolling when you enter a text
         recyclerView.setLayoutManager(linearLayoutManager);
 
-        profileImage = (CircleImageView) findViewById(R.id.profileimage);
-        username = (TextView) findViewById(R.id.userName);
-        sendMessageText = (TextView) findViewById(R.id.messageEditText);
-        sendButton = (Button) findViewById(R.id.sendButton);
-        authentication = FirebaseAuth.getInstance();
-        currentUser = authentication.getCurrentUser();
+        currentUser = FirebaseAuth.getInstance().getCurrentUser(); //get current user and all properties with .
+        userReference = FirebaseDatabase.getInstance().getReference("Users").child(currentUser.getUid()); //get reference of current user
+        userReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.hasChild("username")){
+                    userName = dataSnapshot.child("username").getValue().toString(); //get current username
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+
+
+        profileImage = (CircleImageView) findViewById(R.id.groupImage);
+        groupname = (TextView) findViewById(R.id.groupName);
+        sendMessageText = (TextView) findViewById(R.id.groupMessageEditText);
+        sendButton = (Button) findViewById(R.id.groupSendButton);
         intent = getIntent();
-        userId = intent.getStringExtra("userID"); //get userID from intent in ContactAdapter
+        groupName = intent.getStringExtra("groupName"); //get userID from intent in ContactAdapter
+        userName = intent.getStringExtra("userName"); //get userID from intent in ContactAdapter
 //        System.out.println("Intent ID: "+userId);
 
         sendButton.setOnClickListener(new View.OnClickListener() {
@@ -66,26 +83,22 @@ public class MessagingActivity extends AppCompatActivity {
             public void onClick(View view) {
                 String message = sendMessageText.getText().toString();
                 if(message != null || !message.equals("")){
-                    setSendMessage(currentUser.getUid(), userId, message); //current user(user.getUid() sending to other user (userId)
+                    setSendMessage(currentUser.getUid(), userName, message); //current user(user.getUid() sending to other user (userId)
                 }else{
-                    Toast.makeText(MessagingActivity.this, "Can't send an empty message", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(GroupChatActivity.this, "Can't send an empty message", Toast.LENGTH_SHORT).show();
                 }
                 sendMessageText.setText(""); //set textfield back to empty
             }
         });
 
-        myDatabase = FirebaseDatabase.getInstance().getReference("Users").child(userId);
+        myDatabase = FirebaseDatabase.getInstance().getReference("Groups");
         myDatabase.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                receiver = dataSnapshot.getValue(ContactUser.class); //user to send message to
-                username.setText(receiver.getUsername()); //
-                if(receiver.getImageURL().equals("default")){ //set receiver chatbox image
-                    profileImage.setImageDrawable(getResources().getDrawable(R.drawable.profileicon));
-                }else{
-                    Glide.with(MessagingActivity.this).load(receiver.getImageURL()).into(profileImage);
+                if(dataSnapshot.hasChild(groupName)){ //if the Groups root contains the groupName from the intent
+                    groupname.setText(groupName);
                 }
-                displayMessages(currentUser.getUid(), userId, receiver.getImageURL()); //current user sends to receiver
+                displayMessages(currentUser.getUid()); //display messages of all  users
             }
 
             @Override
@@ -94,19 +107,20 @@ public class MessagingActivity extends AppCompatActivity {
             }
         });
 
+
     }
-    private void setSendMessage(String sender, String receiver, String message){
-        myDatabase = FirebaseDatabase.getInstance().getReference("Chats");
+    private void setSendMessage(String sender, String name, String message){
+        myDatabase = FirebaseDatabase.getInstance().getReference("Groups").child(groupName); //send to specific group in database
         HashMap<String, Object> hashMap = new HashMap<>();
         hashMap.put("sender", sender);
-        hashMap.put("receiver", receiver);
+        hashMap.put("username", name);
         hashMap.put("message", message);
         myDatabase.push().setValue(hashMap); //create a Chat's database instance and then set values appened to chat database
         //the Chats root database acts like a list, so when I do myDatabase.push(), I'm added new messages to the list
     }
-    private void displayMessages(final String myid, final String userId, final String imageurl){ //current user, receiver, image
+    private void displayMessages(final String myID){
         myChat = new ArrayList<>();
-        myDatabase = FirebaseDatabase.getInstance().getReference("Chats"); //reference Chats database to display all messages
+        myDatabase = FirebaseDatabase.getInstance().getReference("Groups").child(groupName); //reference Chats database to display all messages
         myDatabase.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -114,11 +128,11 @@ public class MessagingActivity extends AppCompatActivity {
                 for(DataSnapshot snapshot: dataSnapshot.getChildren()){
                     Chat chat = snapshot.getValue(Chat.class); //chat object to be used for database
                     //this is for the receiver and sender messages display
-                    if(chat.getSender().equals(myid) && chat.getReceiver().equals(userId) || chat.getSender().equals(userId) && chat.getReceiver().equals(myid)){
-                        myChat.add(chat);
+                    if(chat.getSender().equals(myID) || !chat.getSender().equals(myID)){ //if sender is current user or not
+                        myChat.add(chat); //add current user text into array
                     }
-                    chatAdapter = new ChatAdapter(MessagingActivity.this, myChat, imageurl);
-                    recyclerView.setAdapter(chatAdapter);
+                    groupChatAdapter = new GroupChatAdapterList(GroupChatActivity.this, myChat);
+                    recyclerView.setAdapter(groupChatAdapter);
                 }
             }
 
@@ -127,5 +141,7 @@ public class MessagingActivity extends AppCompatActivity {
 
             }
         });
+
     }
+
 }

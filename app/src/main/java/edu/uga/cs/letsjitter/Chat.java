@@ -9,8 +9,8 @@ public class Chat {
     }
 
     public Chat(String sender, String receiver, String message) {
-        this.sender = sender;
-        this.receiver = receiver;
+        this.sender = sender; //current user
+        this.receiver = receiver; //other user
         this.message = message;
     }
 
