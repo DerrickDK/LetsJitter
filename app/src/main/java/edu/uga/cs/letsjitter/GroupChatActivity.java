@@ -75,7 +75,6 @@ public class GroupChatActivity extends AppCompatActivity {
         sendButton = (Button) findViewById(R.id.groupSendButton);
         intent = getIntent();
         groupName = intent.getStringExtra("groupName"); //get userID from intent in ContactAdapter
-        userName = intent.getStringExtra("userName"); //get userID from intent in ContactAdapter
 //        System.out.println("Intent ID: "+userId);
 
         sendButton.setOnClickListener(new View.OnClickListener() {
@@ -83,7 +82,7 @@ public class GroupChatActivity extends AppCompatActivity {
             public void onClick(View view) {
                 String message = sendMessageText.getText().toString();
                 if(message != null || !message.equals("")){
-                    setSendMessage(currentUser.getUid(), userName, message); //current user(user.getUid() sending to other user (userId)
+                    setSendMessage(currentUser.getUid(),userName, message); //current user(user.getUid() sending to other user (userId)
                 }else{
                     Toast.makeText(GroupChatActivity.this, "Can't send an empty message", Toast.LENGTH_SHORT).show();
                 }
@@ -91,7 +90,7 @@ public class GroupChatActivity extends AppCompatActivity {
             }
         });
 
-        myDatabase = FirebaseDatabase.getInstance().getReference("Groups");
+        myDatabase = FirebaseDatabase.getInstance().getReference("Groups"); //reference the Group
         myDatabase.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -113,7 +112,7 @@ public class GroupChatActivity extends AppCompatActivity {
         myDatabase = FirebaseDatabase.getInstance().getReference("Groups").child(groupName); //send to specific group in database
         HashMap<String, Object> hashMap = new HashMap<>();
         hashMap.put("sender", sender);
-        hashMap.put("username", name);
+        hashMap.put("sendername", name);
         hashMap.put("message", message);
         myDatabase.push().setValue(hashMap); //create a Chat's database instance and then set values appened to chat database
         //the Chats root database acts like a list, so when I do myDatabase.push(), I'm added new messages to the list
@@ -126,7 +125,11 @@ public class GroupChatActivity extends AppCompatActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 myChat.clear();
                 for(DataSnapshot snapshot: dataSnapshot.getChildren()){
-                    Chat chat = snapshot.getValue(Chat.class); //chat object to be used for database
+                   // Chat chat = snapshot.getValue(Chat.class);
+                    Chat chat = new Chat();
+                    chat.setSender(snapshot.child("sender").getValue().toString());
+                    chat.setSenderName(snapshot.child("sendername").getValue().toString());
+                    chat.setMessage(snapshot.child("message").getValue().toString());
                     //this is for the receiver and sender messages display
                     if(chat.getSender().equals(myID) || !chat.getSender().equals(myID)){ //if sender is current user or not
                         myChat.add(chat); //add current user text into array

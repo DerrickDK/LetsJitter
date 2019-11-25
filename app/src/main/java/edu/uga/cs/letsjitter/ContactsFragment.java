@@ -29,7 +29,6 @@ public class ContactsFragment extends Fragment {
     private View view;
     private RecyclerView recyclerView;
     private FirebaseUser firebaseUser;
-    private FirebaseAuth authentication;
     private DatabaseReference myDatabase;
     private ContactAdapter contactAdapter;
     private List<ContactUser> myUser;
@@ -43,8 +42,7 @@ public class ContactsFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        authentication = FirebaseAuth.getInstance();
-        firebaseUser = authentication.getCurrentUser();
+        firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         myDatabase = FirebaseDatabase.getInstance().getReference("Users");
     }
 
@@ -64,21 +62,25 @@ public class ContactsFragment extends Fragment {
         myDatabase.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                myUser.clear();
-                for(DataSnapshot snapshot: dataSnapshot.getChildren()){//root is users so we want to loop through all the users
-                    user = new ContactUser(); //create a new user object everytime we find a new child
-                    //user = snapshot.getValue(ContactUser.class);
-                    user.setUserID(snapshot.child("id").getValue().toString());
-                    user.setUsername(snapshot.child("username").getValue().toString());
-                    user.setImageURL(snapshot.child("imageURL").getValue().toString());
-                    if(user.getUserID().equals(firebaseUser.getUid())){ //if child user id equals current user id skip
-                        continue; //skip adding current user to contact's list
+                try {
+                    myUser.clear();
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {//root is users so we want to loop through all the users
+                        user = new ContactUser(); //create a new user object everytime we find a new child
+                        //user = snapshot.getValue(ContactUser.class);
+                        user.setUserID(snapshot.child("id").getValue().toString());
+                        user.setUsername(snapshot.child("username").getValue().toString());
+                        user.setImageURL(snapshot.child("imageURL").getValue().toString());
+                        if (user.getUserID().equals(firebaseUser.getUid())) { //if child user id equals current user id skip
+                            continue; //skip adding current user to contact's list
+                        }
+                        // System.out.println("Children: "+user.toString());
+                        myUser.add(user);
                     }
-                   // System.out.println("Children: "+user.toString());
-                    myUser.add(user);
+                    contactAdapter = new ContactAdapter(getContext(), myUser);
+                    recyclerView.setAdapter(contactAdapter);
+                }catch (Exception ex){ //catch that null error we've been getting
+                    ex.printStackTrace();
                 }
-                contactAdapter = new ContactAdapter(getContext(), myUser);
-                recyclerView.setAdapter(contactAdapter);
             }
 
             @Override

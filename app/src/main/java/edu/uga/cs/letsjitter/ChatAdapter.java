@@ -18,7 +18,7 @@ import com.google.firebase.auth.FirebaseUser;
 
 import java.util.List;
 
-public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
+public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> { //chatAdapter for MessagingActivity
     private static final int MSG_RIGHT = 1;
     private static final int MSG_LEFT = 0;
     private FirebaseUser myUser;

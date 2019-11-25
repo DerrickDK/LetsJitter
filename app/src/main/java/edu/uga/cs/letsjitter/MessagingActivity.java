@@ -33,9 +33,10 @@ public class MessagingActivity extends AppCompatActivity {
     private Button sendButton;
     private FirebaseUser currentUser;
     private FirebaseAuth authentication;
-    private DatabaseReference myDatabase;
+    private DatabaseReference myDatabase, userReference;
     private Intent intent;
     private String userId; //for intent
+    private String currentUserName; //for intent
     private ChatAdapter chatAdapter;
     private ContactUser receiver;
     private List<Chat> myChat;
@@ -57,6 +58,20 @@ public class MessagingActivity extends AppCompatActivity {
         sendButton = (Button) findViewById(R.id.sendButton);
         authentication = FirebaseAuth.getInstance();
         currentUser = authentication.getCurrentUser();
+        userReference = FirebaseDatabase.getInstance().getReference("Users").child(currentUser.getUid()); //get reference of current user
+        userReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.hasChild("username")){
+                    currentUserName = dataSnapshot.child("username").getValue().toString(); //get current username
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
         intent = getIntent();
         userId = intent.getStringExtra("userID"); //get userID from intent in ContactAdapter
 //        System.out.println("Intent ID: "+userId);
@@ -66,7 +81,7 @@ public class MessagingActivity extends AppCompatActivity {
             public void onClick(View view) {
                 String message = sendMessageText.getText().toString();
                 if(message != null || !message.equals("")){
-                    setSendMessage(currentUser.getUid(), userId, message); //current user(user.getUid() sending to other user (userId)
+                    setSendMessage(currentUser.getUid(), currentUserName, userId, message); //current user(user.getUid() sending to other user (userId)
                 }else{
                     Toast.makeText(MessagingActivity.this, "Can't send an empty message", Toast.LENGTH_SHORT).show();
                 }
@@ -95,10 +110,11 @@ public class MessagingActivity extends AppCompatActivity {
         });
 
     }
-    private void setSendMessage(String sender, String receiver, String message){
+    private void setSendMessage(String sender, String name, String receiver,  String message){
         myDatabase = FirebaseDatabase.getInstance().getReference("Chats");
         HashMap<String, Object> hashMap = new HashMap<>();
         hashMap.put("sender", sender);
+        hashMap.put("sendername", name);
         hashMap.put("receiver", receiver);
         hashMap.put("message", message);
         myDatabase.push().setValue(hashMap); //create a Chat's database instance and then set values appened to chat database
@@ -114,6 +130,7 @@ public class MessagingActivity extends AppCompatActivity {
                 for(DataSnapshot snapshot: dataSnapshot.getChildren()){
                     Chat chat = snapshot.getValue(Chat.class); //chat object to be used for database
                     //this is for the receiver and sender messages display
+                    //if sender id equals currentId and receiver equals receiverID
                     if(chat.getSender().equals(myid) && chat.getReceiver().equals(userId) || chat.getSender().equals(userId) && chat.getReceiver().equals(myid)){
                         myChat.add(chat);
                     }

@@ -59,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
         }else { //if user is already logged in we want to verify before they start
             myDatabase.child(user.getUid()).addValueEventListener(new ValueEventListener() { //looking into the database for current user information
                 @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) { //for email verification
                     if((dataSnapshot.hasChild("username") && dataSnapshot.hasChild("id"))){ //if the user has a name and the id exist
                         String userName = dataSnapshot.child("username").getValue().toString(); //save username
                         Toast.makeText(MainActivity.this, "Welcome "+userName, Toast.LENGTH_SHORT).show();

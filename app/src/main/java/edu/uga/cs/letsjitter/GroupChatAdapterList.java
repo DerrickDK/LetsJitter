@@ -47,14 +47,15 @@ public class GroupChatAdapterList extends RecyclerView.Adapter<GroupChatAdapterL
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        myChat.get(position);
+    public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
+//        myChat.get(position);
 //        myUserReference = FirebaseDatabase.getInstance().getReference("Users").child(myUser.getUid());
 //        myUserReference.addValueEventListener(new ValueEventListener() {
 //            @Override
 //            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 //                if(dataSnapshot.hasChild("username")){
 //                    userName = dataSnapshot.child("username").getValue().toString(); //get current username
+//                    holder.showMessage.setText(myChat.get(position).getSender()+": "+myChat.get(position).getMessage());
 //                }
 //            }
 //
@@ -64,7 +65,8 @@ public class GroupChatAdapterList extends RecyclerView.Adapter<GroupChatAdapterL
 //            }
 //        });
         holder.showMessage.setText(myChat.get(position).getMessage());
-        holder.profile_image.setImageResource(R.drawable.profileicon);
+        holder.userText.setText(myChat.get(position).getSenderName()+":");
+      //  holder.profile_image.setImageResource(R.drawable.profileicon);
     }
 
 
@@ -89,7 +91,7 @@ public class GroupChatAdapterList extends RecyclerView.Adapter<GroupChatAdapterL
         public ViewHolder(View itemView) {
             super(itemView);
             showMessage = itemView.findViewById(R.id.show_message); //left or right message will be shown depending on user and receiver
-            //userText = itemView.findViewById(R.id.user_Text); //left or right message will be shown depending on user and receiver
+            userText = itemView.findViewById(R.id.user_Text); //left or right message will be shown depending on user and receiver
             profile_image = itemView.findViewById(R.id.profileImage); //profile pic of user texting, if needed
         }
     }
