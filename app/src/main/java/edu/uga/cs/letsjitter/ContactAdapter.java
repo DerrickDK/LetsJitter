@@ -8,16 +8,20 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.List;
 
 public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHolder> {
     private Context myContext;
+    private DatabaseReference myDatabase;
     private List<ContactUser> myUser;
     private ContactUser user;
 
@@ -33,7 +37,7 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHold
     }
 
     @Override
-    public void onBindViewHolder(final ViewHolder holder, int position) {
+    public void onBindViewHolder(final ViewHolder holder, final int position) {
       //  user = new ContactUser();
        // user = myUser.get(position); //get a specific index
         System.out.println("Full: "+myUser.get(position).toString() + " "+position);
@@ -43,6 +47,16 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHold
         }else{
             Glide.with(myContext).load(myUser.get(position).getImageURL()).into(holder.profile_image);
         }
+        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() { //deletes a group
+            @Override
+            public boolean onLongClick(View view) {
+                myDatabase = FirebaseDatabase.getInstance().getReference("Users");
+                myDatabase.child(myUser.get(position).getUserID()).removeValue();
+                Toast.makeText(myContext, "Remove: "+myUser.get(position).getUsername(), Toast.LENGTH_SHORT).show();
+                return true;
+            }
+        });
+
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
