@@ -38,7 +38,10 @@ public class ContactsFragment extends Fragment {
         // Required empty public constructor
     }
 
-
+    /**
+     * this function gets the current user and references the Users database for later use
+     * @param savedInstanceState
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

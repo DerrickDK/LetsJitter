@@ -18,7 +18,9 @@ import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 
-
+/**
+ * This setting's class log's the user out of the application
+ */
 public class SettingsFragment extends Fragment {
     private FirebaseAuth authentication;
     private Button logoutButton;

@@ -108,6 +108,13 @@ public class GroupChatActivity extends AppCompatActivity {
 
 
     }
+
+    /**
+     * This message sets the messages to be sent to the receiver by the sender
+     * @param sender the sender's id
+     * @param name the sender's name
+     * @param message the message to be sent
+     */
     private void setSendMessage(String sender, String name, String message){
         myDatabase = FirebaseDatabase.getInstance().getReference("Groups").child(groupName); //send to specific group in database
         HashMap<String, Object> hashMap = new HashMap<>();
@@ -117,6 +124,11 @@ public class GroupChatActivity extends AppCompatActivity {
         myDatabase.push().setValue(hashMap); //create a Chat's database instance and then set values appened to chat database
         //the Chats root database acts like a list, so when I do myDatabase.push(), I'm added new messages to the list
     }
+
+    /**
+     * This method displays the messages on the screen
+     * @param myID the current user's id
+     */
     private void displayMessages(final String myID){
         myChat = new ArrayList<>();
         myDatabase = FirebaseDatabase.getInstance().getReference("Groups").child(groupName); //reference Chats database to display all messages

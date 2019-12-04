@@ -66,6 +66,9 @@ public class GroupFragment extends Fragment {
         return view;
     }
 
+    /**
+     * This method reads all groups created in the real time database from Firebase
+     */
     public void readGroupFromDatabase(){
         myDatabase.addValueEventListener(new ValueEventListener() {
             @Override

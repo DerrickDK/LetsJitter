@@ -35,7 +35,10 @@ public class MainActivity extends AppCompatActivity {
     private DatabaseReference myDatabase;
     private EditText groupField;
 
-
+    /**
+     * This is the main method that gets the current user information and verify's them before login
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

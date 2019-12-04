@@ -33,6 +33,12 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> { 
         this.imageURL = imageURL;
     }
 
+    /**
+     *
+     * @param parent
+     * @param viewType
+     * @return
+     */
     @Override
     public ChatAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         if(viewType == MSG_RIGHT){
@@ -44,6 +50,11 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> { 
         }
     }
 
+    /**
+     * This message displays the messages on the UI
+     * @param holder wraps the messages in an ViewHolder object
+     * @param position gets the position of the chat messages in the array list
+     */
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         myChat.get(position);
@@ -56,11 +67,22 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> { 
 
 
     }
+
+    /**
+     * Gets the chat list size
+     * @return
+     */
     @Override
     public int getItemCount() {
         return myChat.size();
     }
 
+    /**
+     * The left or right position of the chat box
+     * @param position checks the position of chat list array and checks if the sender is the current user, then the text will be on the right or left otherwise
+     *
+     * @return
+     */
     @Override
     public int getItemViewType(int position) {
         myUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -70,6 +92,10 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> { 
             return MSG_LEFT;
         }
     }
+
+    /**
+     * Object constructor of viewing the messages.
+     */
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         public TextView showMessage;

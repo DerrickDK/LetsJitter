@@ -1,5 +1,8 @@
 package edu.uga.cs.letsjitter;
 
+/**
+ * This class create the object of how a user is defined
+ */
 public class ContactUser {
     private String id;
     private String username;

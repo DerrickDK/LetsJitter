@@ -25,17 +25,33 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHold
     private List<ContactUser> myUser;
     private ContactUser user;
 
+    /**
+     * Object of contact's list
+     * @param myContext the context of the application
+     * @param myUser the list of user's in database
+     */
     public ContactAdapter(Context myContext, List<ContactUser> myUser) {
         this.myContext = myContext; //this class context
         this.myUser = myUser; //this class user
     }
 
+    /**
+     *
+     * @param parent reference's the view of the parent
+     * @param viewType
+     * @return the object that contains the user view
+     */
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(myContext).inflate(R.layout.contact_item, parent, false);
         return new ContactAdapter.ViewHolder(view);
     }
 
+    /**
+     * This function displays the user contacts on the screen
+     * @param holder object wraps user object in a view to be displayed
+     * @param position position of the user object in the user list array
+     */
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
       //  user = new ContactUser();
@@ -73,11 +89,17 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHold
 
     }
 
+    /**
+     * @return the size of the list of users array
+     */
     @Override
     public int getItemCount() {
         return myUser.size(); //show all items in myUser ContactUsers array
     }
 
+    /**
+     * Object constructor of viewing the users on the screen.
+     */
     public class ViewHolder extends RecyclerView.ViewHolder {
         public TextView username;
         public ImageView profile_image;

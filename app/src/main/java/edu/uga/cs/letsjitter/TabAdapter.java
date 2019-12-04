@@ -9,6 +9,10 @@ public class TabAdapter extends FragmentPagerAdapter {
         super(fm);
     }
 
+    /**
+     * @param position gets the position of the fragment and references that fragment to it's specific category
+     * @return
+     */
     @Override
     public Fragment getItem(int position) {
         switch(position){
@@ -26,6 +30,11 @@ public class TabAdapter extends FragmentPagerAdapter {
         }
     }
 
+    /**
+     * Gives a title to the fragments that contain each category
+     * @param position identifies the fragment position
+     * @return
+     */
     @Override
     public CharSequence getPageTitle(int position) {
         switch(position){

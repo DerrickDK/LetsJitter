@@ -1,10 +1,12 @@
 package edu.uga.cs.letsjitter;
 
+/**
+ * This class creates the structure of the group object
+ */
 public class Group  {
     private String groupName;
     public Group() {
     }
-
     public Group(String groupName) {
         this.groupName = groupName;
     }

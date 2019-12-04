@@ -42,6 +42,10 @@ public class MessagingActivity extends AppCompatActivity {
     private List<Chat> myChat;
     private RecyclerView recyclerView;
 
+    /**
+     * This is the main method that gets the current user information and messaging information to be displayed on the screen
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

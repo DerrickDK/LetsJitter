@@ -70,10 +70,20 @@ public class GroupChatAdapterList extends RecyclerView.Adapter<GroupChatAdapterL
     }
 
 
+    /**
+     * Gets the group chat list size
+     * @return
+     */
     @Override
     public int getItemCount() {
         return myChat.size();
     }
+
+    /**
+     * This method
+     * @param position
+     * @return
+     */
     @Override
     public int getItemViewType(int position) {
         myUser = FirebaseAuth.getInstance().getCurrentUser();

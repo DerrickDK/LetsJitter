@@ -31,6 +31,10 @@ public class RegisterActivity extends AppCompatActivity {
     private DatabaseReference databaseReference;
     private FirebaseUser user;
 
+    /**
+     * This main method sets all user information in the registration activity and creates the user
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

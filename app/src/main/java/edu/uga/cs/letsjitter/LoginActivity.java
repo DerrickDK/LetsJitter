@@ -45,6 +45,11 @@ public class LoginActivity extends AppCompatActivity implements
     private ImageView google;
     private TextView needNewAccount, forgotPassword;
     private Button loginButton;
+
+    /**
+     * Main method for logging the user
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -107,13 +112,13 @@ public class LoginActivity extends AppCompatActivity implements
 
             }
         });
-        google.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
-                startActivityForResult(signInIntent, RC_SIGN_IN);
-            }
-        });
+//        google.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
+//                startActivityForResult(signInIntent, RC_SIGN_IN);
+//            }
+//        });
     }
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {

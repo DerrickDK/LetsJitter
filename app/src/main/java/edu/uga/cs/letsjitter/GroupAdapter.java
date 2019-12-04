@@ -31,7 +31,11 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.ViewHolder> 
     private List<Group> myGroups;
     private String userName;
 
-
+    /**
+     * Object of contact's list
+     * @param myContext the context of the application
+     * @param myGroups the list of user's in database
+     */
     public GroupAdapter(Context myContext, List<Group> myGroups) {
         this.myContext = myContext; //this class context
         this.myGroups = myGroups; //this class user
@@ -41,7 +45,11 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.ViewHolder> 
         View view = LayoutInflater.from(myContext).inflate(R.layout.group_item, parent, false);
         return new GroupAdapter.ViewHolder(view);
     }
-
+    /**
+     * This function displays the groups on the screen
+     * @param holder object wraps user object in a view to be displayed
+     * @param position position of the group object in the user list array
+     */
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
         System.out.println("Group: "+myGroups.get(position).toString() + " "+position);
@@ -71,12 +79,17 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.ViewHolder> 
         });
 
     }
-
+    /**
+     * @return the size of the list of groups array
+     */
     @Override
     public int getItemCount() {
         return myGroups.size();
     }
 
+    /**
+     * Object constructor of viewing the users on the screen.
+     */
     public class ViewHolder extends RecyclerView.ViewHolder {
         public TextView showGroupName;
         public ImageView groupImage;
